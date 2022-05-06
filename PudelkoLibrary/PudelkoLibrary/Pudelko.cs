@@ -12,7 +12,7 @@ namespace PudelkoLibrary
         meter = 1
     }
 
-    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
+    public sealed class Pudelko : IFormattable, IEquatable<Pdelko>, IEnumerable<double>
     {
         private readonly double length;
         private readonly double width;
