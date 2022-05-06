@@ -12,7 +12,7 @@ namespace PudelkoLibrary
         meter = 1
     }
 
-    public sealed class Pudelko : IFormattable, IEquatable<Pdelko>, IEnumerable<double>
+    public sealed class Pudelko : IFormattable, IEquatable<Pudelko>, IEnumerable<double>
     {
         private readonly double length;
         private readonly double width;
@@ -82,6 +82,65 @@ namespace PudelkoLibrary
                 default:
                     throw new FormatException("Invalid format");
             }
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is Pudelko)
+            {
+                return Equals((Pudelko)obj);
+            }
+
+            return base.Equals(obj);
+        }
+        public bool Equals(Pudelko pudelko)
+        {
+            return (Pole == pudelko.Pole && Objetosc == pudelko.Objetosc);
+        }
+        public override int GetHashCode()
+        {
+            return A.GetHashCode() + B.GetHashCode() + C.GetHashCode() + _unit.GetHashCode();
+        }
+        public static bool operator ==(Pudelko p1, Pudelko p2) => p1.Equals(p2);
+        public static bool operator !=(Pudelko p1, Pudelko p2) => !(p1 == p2);
+
+        public static Pudelko operator +(Pudelko p1, Pudelko p2)
+        {
+            double a = p1.A + p2.A;
+            double b = p1.B > p2.B ? p1.B : p2.B;
+            double c = p1.C > p2.C ? p1.C : p2.C;
+            return new Pudelko(a, b, c);
+        }
+        public static explicit operator double[](Pudelko p) => new[] { p.A, p.B, p.C };
+
+        public static implicit operator Pudelko(ValueTuple<int, int, int> v) =>
+            new Pudelko(v.Item1, v.Item2, v.Item3, UnitOfMeasure.milimeter);
+
+        public object this[int index]
+        {
+            get { return tab[index]; }
+        }
+
+        public IEnumerator<double> GetEnumerator()
+        {
+            foreach (var i in tab)
+            {
+                yield return i;
+            }
+        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+        public static Pudelko Parse(string input)
+        {
+            List<double> sizes = new List<double>();
+            string[] inputs = input.Split(' ');
+
+            foreach (var i in inputs)
+            {
+                if (double.TryParse(i, out double temp))
+                    sizes.Add(temp);
+            }
+
+            return sizes.Count == 3 ? new Pudelko(sizes[0], sizes[1], sizes[2]) : throw new FormatException($"Incorrect format: {input}");
         }
     }
 
